@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.mysql.jdbc.Driver;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class ChatServer implements Runnable{
 
@@ -35,6 +36,8 @@ public class ChatServer implements Runnable{
     private ServerSocket serverSocket = null;
     private ChatServerThread client = null;
     private Thread thread = null;
+    
+    public static boolean isS1Fail = false;
     
     public ChatServer() {
         
@@ -103,35 +106,52 @@ public class ChatServer implements Runnable{
         System.setProperty("java.net.preferIPv4Stack", "true");
         
         ChatServer chatServer = null;
-        chatServer = new ChatServer(4445);
-
-        System.out.println("start database...");
-        try {
-            Class.forName(myDriver);
-            
-            System.out.println("Connecting to database...");
-            conn = DriverManager.getConnection(myUrl,USER,PASS);
-            System.out.println("Connection Ok");
-            
-           
-            System.out.println("starting multicast group server...");
-            String sql = "SELECT gid, ip FROM groupchat";
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            
-            while(rs.next()){
-                String gid = rs.getString("gid");
-                String ip = rs.getString("ip");
-                Thread  multi = new MultiCastServerThread(gid,ip,conn,stmt);
-                multi.start();
+        chatServer = new ChatServer(4446);
+        
+        //System.out.println("start check status s1");
+        Thread thread = new CheckFailThread("localhost",4445);
+        thread.start();
+        
+        System.out.println("Wait Fail..");
+        while(true){
+            try {
+                TimeUnit.MILLISECONDS.sleep(300);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
             }
-            rs.close();
-            
-            //stmt.close();
-        } catch (ClassNotFoundException e) {
-            System.out.println("class error : " + e.getMessage());
-        } catch (SQLException e) {
-            System.out.println("sql error : " + e.getMessage());
+            System.out.println("status : "+isS1Fail);
+            if(isS1Fail){
+                System.out.println("start database...");
+                try {
+                    Class.forName(myDriver);
+
+                    System.out.println("Connecting to database...");
+                    conn = DriverManager.getConnection(myUrl,USER,PASS);
+                    System.out.println("Connection Ok");
+
+
+                    System.out.println("starting multicast group server...");
+                    String sql = "SELECT gid, ip FROM groupchat";
+                    stmt = conn.createStatement();
+                    ResultSet rs = stmt.executeQuery(sql);
+
+                    while(rs.next()){
+                        String gid = rs.getString("gid");
+                        String ip = rs.getString("ip");
+                        Thread  multi = new MultiCastServerThread(gid,ip,conn,stmt);
+                        multi.start();
+                    }
+                    rs.close();
+
+                    //stmt.close();
+                } catch (ClassNotFoundException e) {
+                    System.out.println("class error : " + e.getMessage());
+                } catch (SQLException e) {
+                    System.out.println("sql error : " + e.getMessage());
+                }
+    
+                break;
+            }
         }
         Scanner sc = new Scanner(System.in);
         String line = sc.nextLine();

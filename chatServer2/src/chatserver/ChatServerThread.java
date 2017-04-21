@@ -41,8 +41,7 @@ public class ChatServerThread extends Thread {
         while (!done){
             try {
                 String line = streamIn.readUTF();
-                if(!line.equalsIgnoreCase("CHECK"))
-                    System.out.println(clientID + " -> "+line);
+                System.out.println(clientID + " -> "+line);
                 readCommand(line);
                 done = line.equalsIgnoreCase("quit");
             } catch (IOException e){
@@ -137,10 +136,6 @@ public class ChatServerThread extends Thread {
             }
             rs.close();
             ChatServer.stmt.close();
-            streamOut.writeUTF(messageBack);
-        }
-        else if(command[0].equalsIgnoreCase("CHECK")){
-            messageBack = "OK";
             streamOut.writeUTF(messageBack);
         }
     }
