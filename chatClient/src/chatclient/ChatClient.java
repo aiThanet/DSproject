@@ -69,16 +69,15 @@ public class ChatClient implements Runnable{
                 clientSocket = new Socket(serverName,svPort);
                 System.out.println("Connected: " + clientSocket);
                 start();
-                //System.out.println("prepare run old cmd");
+                
                 runCommand(lastCmd);
-                //System.out.println("fin run old cmd");
+                
                 Scanner sc = new Scanner(System.in);
                 showCommand();
                 while(true){
                     System.out.print(">>");
                     String inputCommand = sc.nextLine();
                     lastCmd = inputCommand;
-                    System.out.println("prepare run old cmd");
                     runCommand(inputCommand);
                 }
             } catch (IOException ex) {
@@ -316,9 +315,12 @@ public class ChatClient implements Runnable{
     
     public static void main(String [] args) throws IOException{
         //client = new ChatClient("localhost",4444);
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Please enter Server Chat ip : ");
+        String svIP = sc.nextLine();
         System.setProperty("java.net.preferIPv4Stack", "true");
         System.out.println("Welcome to chat program, Please enter the commands ");
-        ChatClient client  = new ChatClient("localhost",svPort);
+        ChatClient client  = new ChatClient(svIP,svPort);
     }
 
     @Override

@@ -108,8 +108,11 @@ public class ChatServer implements Runnable{
         ChatServer chatServer = null;
         chatServer = new ChatServer(4446);
         
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Please enter Server 1 ip : ");
+        String svIP = sc.nextLine();
         //System.out.println("start check status s1");
-        Thread thread = new CheckFailThread("localhost",4445);
+        Thread thread = new CheckFailThread(svIP,4445);
         thread.start();
         
         System.out.println("Wait Fail..");
@@ -153,7 +156,7 @@ public class ChatServer implements Runnable{
                 break;
             }
         }
-        Scanner sc = new Scanner(System.in);
+        
         String line = sc.nextLine();
         if(line.equalsIgnoreCase("bye")){
             chatServer.stop();
