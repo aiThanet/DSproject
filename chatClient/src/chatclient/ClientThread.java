@@ -40,7 +40,7 @@ public class ClientThread extends Thread{
         //System.setProperty("java.net.preferIPv4Stack", "true")
         try {
             while(true) {
-                byte[] buffer = new byte[50]; 
+                byte[] buffer = new byte[200]; 
                 DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
                 multicastSocket.receive(messageIn);
                 
@@ -52,7 +52,13 @@ public class ClientThread extends Thread{
                 } else if (ntext[0].equalsIgnoreCase("GETUNREAD") || ntext[0].equalsIgnoreCase("EXIT") || ntext[0].equalsIgnoreCase("LEAVE")) {
                     continue;
                 } else {
-                    String line = ntext[0]+"("+ntext[2]+" "+ntext[3]+") : "+ntext[4];
+                    String message ="";
+                    int i =4;
+                    while(i<ntext.length){
+                        message = message + " " + ntext[i];
+                        i++;
+                    }
+                    String line = ntext[0]+"("+ntext[2]+" "+ntext[3]+") :"+message;
                     Pair new_msg = new Pair(Integer.parseInt(ntext[1]),line);
                     ChatClient.msg_buffer.add(new_msg);
                     int tj = Integer.parseInt(ntext[1]);

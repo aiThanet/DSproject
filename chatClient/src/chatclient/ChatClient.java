@@ -85,7 +85,27 @@ public class ChatClient implements Runnable{
             }
         } catch (IOException e) {
             System.out.println("IO : "+e.getMessage());
-            
+            System.out.println("Server 1 is downed try to connecting server2");
+            try {
+                //change port to Server 2
+                svPort = 4446;
+                clientSocket = new Socket(serverName,svPort);
+                System.out.println("Connected: " + clientSocket);
+                start();
+                
+                runCommand(lastCmd);
+                
+                Scanner sc = new Scanner(System.in);
+                showCommand();
+                while(true){
+                    System.out.print(">>");
+                    String inputCommand = sc.nextLine();
+                    lastCmd = inputCommand;
+                    runCommand(inputCommand);
+                }
+            } catch (IOException ex) {
+                System.out.println("S2 IO : "+ex.getMessage());
+            }
         }
     }
 

@@ -60,7 +60,7 @@ public class MultiCastServerThread extends Thread{
             rs.close();
             while(true) {
                 
-                byte[] buffer = new byte[50]; 
+                byte[] buffer = new byte[200]; 
 //                String text = "clientID";
 //                byte [] m = text.getBytes();
 //                DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 4444);
@@ -69,6 +69,7 @@ public class MultiCastServerThread extends Thread{
                 
                 DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
                 multicastSocket.receive(messageIn);
+                
                 
                 String text = new String(messageIn.getData());
                 String[] ntext = text.split(" ");
@@ -91,10 +92,12 @@ public class MultiCastServerThread extends Thread{
                     sql = "UPDATE exitUser SET exittime='"+mid+"' WHERE uid ='"+uid+"' and gid ='"+gid+"'";
                     stmt.executeUpdate(sql);
                     rss.close();
-                    sql = "SELECT mid,uid,message,timestamp FROM chat WHERE gid ='"+gid+"' and mid <= "+mid+" and mid > "+lastMessageID;
-                    rss = stmt.executeQuery(sql);
-                    Thread sendUnread = new SendUnreadThread(rss,ntext[2],5555);
-                    sendUnread.start();
+                    if(lastMessageID < Integer.MAX_VALUE) {
+                        sql = "SELECT mid,uid,message,timestamp FROM chat WHERE gid ='"+gid+"' and mid <= "+mid+" and mid > "+lastMessageID;
+                        rss = stmt.executeQuery(sql);
+                        Thread sendUnread = new SendUnreadThread(rss,ntext[2],5555);
+                        sendUnread.start();
+                    }
                 } else if(ntext[0].equalsIgnoreCase("LEAVE")){
                     int lastMessageID = Integer.MAX_VALUE;
                     //update lastMessage
@@ -103,7 +106,13 @@ public class MultiCastServerThread extends Thread{
                     //System.out.println("c3");
                 } else {
                     ts = Integer.parseInt(ntext[1]);
-                    System.out.println(ntext[0]+"("+ntext[2]+" "+ntext[3]+") : " + ntext[1] + " : " + ntext[4]);
+                    String message ="";
+                    int i =4;
+                    while(i<ntext.length){
+                        message = message + " " + ntext[i];
+                        i++;
+                    }
+                    System.out.println(ntext[0]+"("+ntext[2]+" "+ntext[3]+") : " + ntext[1] + " :" + message);
                     mid++;
                     DateFormat df = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss.SSS"); 
                     Date date = df.parse(ntext[2]+" "+ntext[3]);
@@ -114,7 +123,7 @@ public class MultiCastServerThread extends Thread{
                     pstmt.setInt(1,mid);
                     pstmt.setString(2, gid);
                     pstmt.setString(3, ntext[0]);
-                    pstmt.setString(4, ntext[4]);
+                    pstmt.setString(4, message.substring(1));
                     pstmt.setInt(5,Integer.parseInt(ntext[1]));
                     pstmt.setTimestamp(6,sqlDate);
                     pstmt.executeUpdate();

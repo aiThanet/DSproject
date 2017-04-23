@@ -60,9 +60,15 @@ public class DisplayThread extends Thread{
             Pair msg = msg_buffer.poll();
             String msgg = msg.msg;
             String [] line = msgg.split(" ");
+            String message ="";
+            int i =3;
+            while(i<line.length){
+                message = message + " " + line[i];
+                i++;
+            }
             int index = line[1].indexOf(".");
             String new_line = line[1].substring(0,index);
-            new_line = line[0]+" "+new_line +"): "+line[3];
+            new_line = line[0]+" "+new_line +"):"+message;
             System.out.println(new_line);
         }
     }

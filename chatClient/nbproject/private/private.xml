@@ -5,6 +5,7 @@
         <group>
             <file>file:/Users/aithanet/NetBeansProjects/chatClient/src/chatclient/ClientThread.java</file>
             <file>file:/Users/aithanet/NetBeansProjects/chatClient/src/chatclient/ChatClient.java</file>
+            <file>file:/Users/aithanet/NetBeansProjects/chatClient/src/chatclient/DisplayThread.java</file>
             <file>file:/Users/aithanet/NetBeansProjects/chatClient/src/chatclient/GetUnreadThread.java</file>
         </group>
     </open-files>

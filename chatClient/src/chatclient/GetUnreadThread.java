@@ -44,7 +44,13 @@ public class GetUnreadThread extends Thread{
                 String [] lines = line.split(" ");
                 int index = lines[1].indexOf(".");
                 String new_line = lines[1].substring(0,index);
-                new_line = lines[0]+" "+new_line +"): "+lines[3];
+                String message = "";
+                int i = 3;
+                while(i<lines.length){
+                    message = message + " " + lines[i];
+                    i++;
+                }
+                new_line = lines[0]+" "+new_line +"):"+message;
                 System.out.println(new_line);
             }
             if(streamIn != null) streamIn.close();

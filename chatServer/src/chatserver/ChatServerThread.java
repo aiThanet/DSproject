@@ -29,6 +29,7 @@ public class ChatServerThread extends Thread {
     private String clientID = "Guest";
     private MulticastSocket multicastSocket = null;
     
+    
     public  ChatServerThread(ChatServer server, Socket socket){
         ChatServer.threadID++;
         this.server = server;

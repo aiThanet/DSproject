@@ -103,7 +103,7 @@ public class ChatServer implements Runnable{
         System.setProperty("java.net.preferIPv4Stack", "true");
         
         ChatServer chatServer = null;
-        chatServer = new ChatServer(444);
+        chatServer = new ChatServer(4445);
 
         System.out.println("start database...");
         try {
